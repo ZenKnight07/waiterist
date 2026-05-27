@@ -1,7 +1,7 @@
 {
   "name": "waiterist",
   "version": "1.0.0",
-  "description": "",
+  "description": "An assistant app for Waiters.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,5 +13,13 @@
   "dependencies": {
     "@capacitor/android": "^8.3.4",
     "@capacitor/core": "^8.3.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zenknight07/waiterist.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zenknight07/waiterist/issues"
+  },
+  "homepage": "https://github.com/zenknight07/waiterist#readme"
 }

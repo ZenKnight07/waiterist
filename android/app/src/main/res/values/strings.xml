@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">waiterist</string>
+    <string name="title_activity_main">waiterist</string>
+    <string name="package_name">com.zen.waiterist</string>
+    <string name="custom_url_scheme">com.zen.waiterist</string>
+</resources>
