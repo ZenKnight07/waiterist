@@ -169,21 +169,10 @@
         .btn-press { transition: all 0.05s ease; }
         .btn-press:active { transform: scale(0.95); }
 
-        /* Print Specific Styling mapped for Browser Print replacing jsPDF */
+        /* Left here for legacy compatibility */
         @media print {
-            body > *:not(#print-section) { 
-                display: none !important; 
-            }
-            #print-section {
-                display: block !important;
-                color: #000000 !important; 
-                background: #ffffff !important;
-                font-family: monospace; 
-                white-space: pre-wrap;
-                font-size: 14px; 
-                line-height: 1.4; 
-                padding: 20px;
-            }
+            body > *:not(#print-section) { display: none !important; }
+            #print-section { display: block !important; color: #000000 !important; background: #ffffff !important; font-family: monospace; white-space: pre-wrap; font-size: 14px; line-height: 1.4; padding: 20px; }
         }
     </style>
 </head>
@@ -687,16 +676,110 @@
             );
         }
 
-        function triggerNativePrint(rawText) {
+        /* ========================================================================================
+           ADVANCED OFFLINE PDF GENERATION ENGINE
+           Constructs a valid PDF 1.4 byte-stream manually to avoid dependencies and massive libraries.
+           Compatible natively with Android WebView share intents and Desktop browser Blob downloads.
+           ========================================================================================
+        */
+        
+        function generateRawPDF(text) {
+            // Strip non-ASCII to maintain 1-byte per character ratio for accurate PDF xref offsets
+            text = text.replace(/[^\x00-\x7F]/g, "");
+            
+            const lines = text.split('\n');
+            const fontSize = 12;
+            const lineHeight = 14;
+            const margin = 20;
+            const pageHeight = Math.max(400, (lines.length * lineHeight) + (margin * 2));
+            const pageWidth = 350;
+
+            // PDF Content Stream (Basic Text Commands)
+            let stream = `BT /F1 ${fontSize} Tf ${lineHeight} TL ${margin} ${pageHeight - margin - fontSize} Td\n`;
+            lines.forEach(line => {
+                let escaped = line.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+                stream += `(${escaped}) Tj T*\n`;
+            });
+            stream += 'ET';
+
+            // PDF Objects Array
+            const objects = [];
+            objects.push(`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj`);
+            objects.push(`2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj`);
+            objects.push(`3 0 obj\n<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Contents 5 0 R >>\nendobj`);
+            objects.push(`4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>\nendobj`);
+            objects.push(`5 0 obj\n<< /Length ${stream.length} >>\nstream\n${stream}\nendstream\nendobj`);
+
+            let pdf = "%PDF-1.4\n";
+            let xref = "xref\n0 6\n0000000000 65535 f \n";
+            
+            // Calculate byte offsets dynamically
+            let offsets = [];
+            for (let i = 0; i < objects.length; i++) {
+                offsets.push(pdf.length);
+                pdf += objects[i] + "\n";
+            }
+
+            for (let i = 0; i < offsets.length; i++) {
+                let offsetStr = offsets[i].toString().padStart(10, '0');
+                xref += `${offsetStr} 00000 n \n`;
+            }
+
+            let startxref = pdf.length;
+            pdf += xref;
+            pdf += `trailer\n<< /Size 6 /Root 1 0 R >>\n`;
+            pdf += `startxref\n${startxref}\n%%EOF\n`;
+
+            return pdf;
+        }
+
+        function fallbackBlobDownload(blob, fileName) {
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+            playBeep(900, 0.15, "sine");
+        }
+
+        function handlePDFExport(rawText) {
             try {
-                const printSection = document.getElementById("print-section");
-                printSection.innerText = rawText;
-                printSection.classList.remove("hidden");
-                window.print();
-                printSection.classList.add("hidden");
-                playBeep(900, 0.15, "sine");
+                const pdfString = generateRawPDF(rawText);
+                
+                // Convert to raw byte array
+                const len = pdfString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = pdfString.charCodeAt(i);
+                }
+                
+                const blob = new Blob([bytes], { type: "application/pdf" });
+                const fileName = `KOT_Table_${selectedTableId}_${Date.now()}.pdf`;
+
+                // Wrap in a File object (Required for Android Native Share API)
+                const file = new File([blob], fileName, { type: "application/pdf" });
+
+                // Check if running on Android/Modern Environment that supports native sharing
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        title: `KOT Table ${selectedTableId}`,
+                        files: [file]
+                    }).then(() => {
+                        playBeep(900, 0.15, "sine");
+                    }).catch(err => {
+                        console.log("Native share cancelled or failed, falling back to direct download.", err);
+                        fallbackBlobDownload(blob, fileName);
+                    });
+                } else {
+                    // Fallback for Desktop Browsers / Older Webviews
+                    fallbackBlobDownload(blob, fileName);
+                }
             } catch (error) {
-                console.error("Local Print API error:", error);
+                console.error("PDF generation error:", error);
+                alert("Failed to generate PDF. See console.");
             }
         }
 
@@ -738,7 +821,7 @@
             rawInvoice += `================================`;
 
             const htmlPreview = `
-                <p class="text-xs text-purple-400 mb-2 font-sans">Verify the Kitchen Order Ticket (KOT). Click "PRINT / SAVE PDF" to save the order ticket directly via native system UI.</p>
+                <p class="text-xs text-purple-400 mb-2 font-sans">Verify the Kitchen Order Ticket (KOT). Click "EXPORT / SHARE PDF" to natively share or print.</p>
                 <div class="relative">
                     <pre id="thermal-receipt" class="font-mono bg-[#0d0915] text-[#39ff14] p-4 rounded-lg border border-[#39ff14]/30 text-xs overflow-x-auto text-left leading-relaxed max-h-[280px] overflow-y-auto whitespace-pre select-all">${rawInvoice}</pre>
                     <div class="absolute top-2 right-2 flex gap-2">
@@ -759,9 +842,9 @@
                 htmlPreview,
                 [
                     {
-                        label: " PRINT / SAVE PDF",
+                        label: " EXPORT / SHARE PDF",
                         classes: "bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-2",
-                        onClick: () => triggerNativePrint(window.activeRawInvoiceText)
+                        onClick: () => handlePDFExport(window.activeRawInvoiceText)
                     },
                     {
                         label: "CLOSE PREVIEW",
