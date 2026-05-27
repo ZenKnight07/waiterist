@@ -6,9 +6,9 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
 
 ---
 
-## 🚀 Features
+## Features
 
-### 🪑 Table Management
+### Table Management
 - 14-table interactive dashboard
 - Real-time table status:
   - Vacant
@@ -16,32 +16,32 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
   - Active with items
 - Persistent data
 
-### 🍜 Order System
+### Order System
 - Category-based digital menu:
 - Add / remove item quantities instantly
 - Live order updates per table
 - Custom kitchen notes per table
 
-### 🧾 KOT (Kitchen Order Ticket)
+### KOT (Kitchen Order Ticket)
 - Auto-generated thermal-style KOT
 - Printable using native browser print
 - Clean receipt format for kitchen use
 - Copy raw KOT text to clipboard
 
-### 🎨 Cyberpunk UI
+### Cyberpunk UI
 - Neon-themed retro terminal design
 - Scanline effects and glow animations
 - Fully responsive layout
 - Smooth interactive transitions
 
-### 💾 Offline Support
+### Offline Support
 - No backend required
 - Fully client-side application
 - Works directly in browser
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - HTML5
 - CSS3
@@ -75,7 +75,7 @@ This project is open-source and free to use for personal and commercial restaura
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### 1. Clone or Download
 ```bash
