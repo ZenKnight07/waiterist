@@ -62,16 +62,21 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
 
 ---
 
+## Browser Support
+- Chrome (Recommended)
+- Edge
+- Firefox
+- Mobile browsers (Android supported)
+
+---
+
+## License
+This project is open-source and free to use for personal and commercial restaurant systems.
+
+---
+
 ## 📦 Installation
 
 ### 1. Clone or Download
 ```bash
 git clone https://github.com/zenknight07/waiter-assistant.git
-
----
-
-## Browser Support
-Chrome (Recommended)
-Edge
-Firefox
-Mobile browsers (Android supported)
