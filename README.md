@@ -51,8 +51,17 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
 
 ---
 
-## 📦 Installation & Usage
+## 📦 Installation
 
 ### 1. Clone or Download
 ```bash
-git clone https://github.com/your-username/waiter-assistant.git
+git clone https://github.com/zenknight07/waiter-assistant.git
+
+## How to Use
+- Open the app in a browser
+- Select a table (T-1 to T-14)
+- Choose food category
+- Add items to the order
+- Add optional kitchen notes
+- Click Finalize / KOT
+- Print or copy the kitchen ticket
