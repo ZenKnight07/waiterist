@@ -51,7 +51,7 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
 
 ---
 
-How to Use
+## How to Use
 - Open the app in a browser
 - Select a table (T-1 to T-14)
 - Choose food category
