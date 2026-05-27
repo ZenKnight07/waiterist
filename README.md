@@ -1,8 +1,8 @@
-# 🍽️ Waiter Assistant (KOT Generator)
+# Waiter Assistant
 
-A futuristic, offline-ready **Waiter Order Management & Kitchen Order Ticket (KOT) system** built with pure HTML, CSS, and JavaScript.
+A offline **Waiter - Order Management & Kitchen Order Ticket (KOT) system** built with pure HTML, CSS, and JavaScript.
 
-Designed for restaurants and cafes to manage tables, take orders, and generate printable kitchen tickets in a fast, cyberpunk-style interface.
+Designed for restaurants and cafes to manage tables, take orders, and generate printable kitchen tickets in a fast interface.
 
 ---
 
@@ -14,11 +14,10 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
   - Vacant
   - Ordering
   - Active with items
-- Persistent storage using `localStorage`
+- Persistent data
 
 ### 🍜 Order System
 - Category-based digital menu:
-  - Momo, Chowmein, Sekuwa, Drinks, Snacks, etc.
 - Add / remove item quantities instantly
 - Live order updates per table
 - Custom kitchen notes per table
@@ -28,10 +27,6 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
 - Printable using native browser print
 - Clean receipt format for kitchen use
 - Copy raw KOT text to clipboard
-
-### 🔊 Audio Feedback System
-- Sound effects for interactions
-- Toggle ON/OFF audio system
 
 ### 🎨 Cyberpunk UI
 - Neon-themed retro terminal design
@@ -49,9 +44,8 @@ Designed for restaurants and cafes to manage tables, take orders, and generate p
 ## 🛠️ Tech Stack
 
 - HTML5
-- CSS3 (Custom Tailwind-like utility system)
+- CSS3
 - Vanilla JavaScript
-- Web Audio API
 - LocalStorage API
 - Browser Print API
 
